@@ -1,0 +1,31 @@
+# GraphQL Schema definition for Travel App
+
+# Queries
+type Query {
+    users(page: Int, size: Int): [User]  # Pagination example
+    user(id: Long): User
+    categories(page: Int, size: Int): [Category]  # Pagination example
+    category(id: Long): Category
+}
+
+# Mutations
+type Mutation {
+    createUser(username: String!, email: String!, password: String!): User  # User creation mutation
+    updateUser(id: Long!, username: String, email: String, password: String): User  # User update mutation
+    createCategory(name: String!, description: String): Category  # Category creation mutation
+    updateCategory(id: Long!, name: String, description: String): Category  # Category update mutation
+}
+
+# Types
+type User {
+    id: Long
+    username: String
+    email: String
+    # password field removed for security reasons
+}
+
+type Category {
+    id: Long
+    name: String
+    description: String
+}

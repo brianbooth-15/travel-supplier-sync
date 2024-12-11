@@ -1,0 +1,50 @@
+/* Styles for the CategoryList component */
+
+.category-list-container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  h2 {
+    font-size: 2rem;
+    color: #333;
+    text-align: center;
+  }
+  
+  .category-list {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .category-item {
+    padding: 15px;
+    margin-bottom: 15px;
+    background-color: #fff;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .category-item h3 {
+    font-size: 1.5rem;
+    color: #007bff;
+    margin-bottom: 5px;
+  }
+  
+  .category-item p {
+    font-size: 1rem;
+    color: #555;
+    margin: 0;
+  }
+  
+  /* Add a hover effect to each category item */
+  .category-item:hover {
+    background-color: #f0f0f0;
+    transform: translateY(-2px);
+    transition: transform 0.2s ease, background-color 0.2s ease;
+  }
+  
