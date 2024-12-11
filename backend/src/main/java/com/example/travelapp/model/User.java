@@ -1,10 +1,16 @@
 package com.example.travelapp.model;
 
-import javax.persistence.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import jakarta.persistence.*;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Objects;
 
 @Entity
-public class User {
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -60,6 +66,33 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    // Implementing UserDetails methods
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        // For simplicity, we assign "ROLE_USER" as the authority. You can extend this to manage roles/permissions
+        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;  // You can add logic here to expire accounts if needed
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;  // You can add logic here to lock accounts if needed
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;  // You can add logic here to expire credentials if needed
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;  // You can add logic here to disable accounts if needed
     }
 
     // Override equals and hashCode for correct comparisons and hash-based collections

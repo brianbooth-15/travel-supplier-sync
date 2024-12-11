@@ -1,35 +1,26 @@
 import React, { useState } from 'react';
-import { useMutation, gql } from '@apollo/client';
-import { useNavigate } from 'react-router-dom'; // For redirecting to the dashboard or home page
-import './Login.css';  // Assuming Login.css is in the same folder
+import { useNavigate, Link } from 'react-router-dom'; // Use Link for better navigation
+import './Login.css'; // Assuming Login.css is in the same folder
 
-
-// GraphQL mutation to log in a user
-const LOGIN_USER = gql`
-  mutation LoginUser($email: String!, $password: String!) {
-    loginUser(email: $email, password: $password) {
-      token  # Assume that the mutation returns a token
-    }
-  }
-`;
+// Hardcoded users
+const USERS = [
+  {
+    email: 'admin@test.com',
+    password: 'test',
+    role: 'admin', // Admin user
+  },
+  {
+    email: 'user@test.com',
+    password: 'test',
+    role: 'user', // General user
+  },
+];
 
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
-
-  const [loginUser] = useMutation(LOGIN_USER, {
-    onCompleted: (data) => {
-      // Store the token in localStorage or sessionStorage
-      localStorage.setItem('token', data.loginUser.token);
-      // Redirect to the dashboard or home page
-      navigate('/dashboard');
-    },
-    onError: (err) => {
-      // Handle GraphQL errors
-      setError(err.message);
-    }
-  });
+  const [loading, setLoading] = useState(false); // Add a loading state
 
   const navigate = useNavigate(); // Hook to navigate to different routes
 
@@ -41,11 +32,25 @@ function Login() {
       return;
     }
 
-    // Reset any previous error before submitting
-    setError(null);
+    setError(null); // Reset error state
+    setLoading(true); // Set loading state
 
-    // Call the login mutation
-    loginUser({ variables: { email, password } });
+    // Check if the email and password match any hardcoded users
+    const user = USERS.find((user) => user.email === email && user.password === password);
+
+    if (user) {
+      // If a match is found, store the user token and redirect to home page
+      localStorage.setItem('token', 'your-token-here'); // Here you can store an actual token if needed
+      localStorage.setItem('role', user.role); // Store the user's role if needed
+
+      // Redirect to the homepage after successful login
+      navigate('/home');
+    } else {
+      // If no match is found, show an error
+      setError('Invalid email or password');
+    }
+
+    setLoading(false); // Reset loading state
   };
 
   return (
@@ -61,6 +66,7 @@ function Login() {
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Enter your email"
             required
+            disabled={loading}
           />
         </div>
         <div>
@@ -72,13 +78,18 @@ function Login() {
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Enter your password"
             required
+            disabled={loading}
           />
         </div>
         {error && <p className="error-message">{error}</p>}
-        <button type="submit">Login</button>
+        <button type="submit" disabled={loading}>
+          {loading ? 'Logging in...' : 'Login'}
+        </button>
       </form>
       <div>
-        <p>Don't have an account? <a href="/signup">Sign Up</a></p>
+        <p>
+          Don't have an account? <Link to="/signup">Sign Up</Link>
+        </p>
       </div>
     </div>
   );

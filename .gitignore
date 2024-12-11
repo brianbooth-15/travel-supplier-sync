@@ -1,35 +1,44 @@
-# Exclude the main node_modules directory
-node_modules/
+# Ignore root-level node_modules
+/node_modules/
 
-# Exclude the node_modules directory inside the frontend folder
-frontend/node_modules/
+# Ignore frontend node_modules
+/frontend/node_modules/
 
-# Logs
+# Ignore logs
 *.log
 logs/
 
-# Environment variables
-.env
-.env.*
-
-# Build output
-dist/
-build/
-
-# Temporary files and directories
+# Ignore temporary files
 tmp/
 temp/
 
-# OS-specific files
+# Ignore environment files
+.env
+.env.*
+
+# Ignore build output
+/dist/
+/build/
+
+# Ignore OS-specific files
 .DS_Store
 Thumbs.db
 
-# IDE and editor-specific files
+# Ignore IDE/editor-specific files
 .vscode/
 .idea/
 *.swp
-*.sublime-workspace
-*.sublime-project
 
-# Dependency directories in subfolders (recursively, if present)
+# Ignore dependency directories in nested structures
 **/node_modules/
+
+# Ignore specific frontend files (optional)
+frontend/public/*.html  # Optional if you want to exclude certain files
+
+# Ignore Maven target directory in backend
+/backend/target/
+
+# Ignore Docker-related temporary files
+.dockerignore
+node_modules/.bin/loose-envify
+/db_data

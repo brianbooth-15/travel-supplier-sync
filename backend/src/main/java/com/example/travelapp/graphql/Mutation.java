@@ -1,12 +1,24 @@
+package com.example.travelapp.graphql;
+
+import com.example.travelapp.model.User;
+import com.example.travelapp.model.Category;
+import com.example.travelapp.service.UserService;
+import com.example.travelapp.service.CategoryService;
+import graphql.schema.DataFetcher;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Component;
+
 @Component
 public class Mutation {
 
     private final UserService userService;
     private final CategoryService categoryService;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     public Mutation(UserService userService, CategoryService categoryService) {
         this.userService = userService;
         this.categoryService = categoryService;
+        this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
     // Mutation to create a new user
@@ -16,8 +28,10 @@ public class Mutation {
             String email = dataFetchingEnvironment.getArgument("email");
             String password = dataFetchingEnvironment.getArgument("password");
 
-            // You would also hash the password here before saving
-            User newUser = new User(username, email, password);
+            // Hash the password before saving
+            String hashedPassword = passwordEncoder.encode(password);
+
+            User newUser = new User(username, email, hashedPassword);
             return userService.saveUser(newUser);
         };
     }
@@ -30,12 +44,19 @@ public class Mutation {
             String email = dataFetchingEnvironment.getArgument("email");
             String password = dataFetchingEnvironment.getArgument("password");
 
-            User existingUser = userService.getUserById(id).orElseThrow(() -> new RuntimeException("User not found"));
+            // Fetch the existing user using getUserById
+            User existingUser = userService.getUserById(id)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+
             existingUser.setUsername(username);
             existingUser.setEmail(email);
+
+            // If a password is provided, hash it before saving
             if (password != null) {
-                existingUser.setPassword(password); // Consider hashing the password before saving
+                String hashedPassword = passwordEncoder.encode(password);
+                existingUser.setPassword(hashedPassword);
             }
+
             return userService.saveUser(existingUser);
         };
     }
@@ -60,8 +81,10 @@ public class Mutation {
 
             Category existingCategory = categoryService.getCategoryById(id)
                     .orElseThrow(() -> new RuntimeException("Category not found"));
+
             existingCategory.setName(name);
             existingCategory.setDescription(description);
+
             return categoryService.saveCategory(existingCategory);
         };
     }

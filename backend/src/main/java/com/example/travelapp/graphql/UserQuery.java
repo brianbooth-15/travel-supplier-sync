@@ -6,7 +6,6 @@ import graphql.schema.DataFetcher;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Optional;
 
 @Component
 public class UserQuery {
@@ -22,11 +21,11 @@ public class UserQuery {
         return dataFetchingEnvironment -> userRepository.findAll();
     }
 
-    // Fetch user by ID
-    public DataFetcher<Optional<User>> getUserById() {
+    // Fetch user by ID (returning the User directly)
+    public DataFetcher<User> getUserById() {
         return dataFetchingEnvironment -> {
             Long id = dataFetchingEnvironment.getArgument("id");
-            return userRepository.findById(id);
+            return userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
         };
     }
 }

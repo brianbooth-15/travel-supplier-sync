@@ -1,0 +1,56 @@
+/* Main container for the homepage */
+.homepage-container {
+    text-align: center;
+    padding: 2rem;
+  }
+  
+  .homepage-container h1 {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  /* Container for the tiles */
+  .tiles-container {
+    display: flex;
+    justify-content: center;
+    gap: 2rem; /* Add some space between the tiles */
+  }
+  
+  /* Styles for each tile */
+  .tile {
+    background-color: #f4f4f4;
+    padding: 2rem;
+    border-radius: 8px;
+    width: 250px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .tile:hover {
+    transform: translateY(-10px); /* Slight lift effect */
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2); /* Enhanced shadow on hover */
+  }
+  
+  .tile h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .tile p {
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+    color: #555;
+  }
+  
+  .tile-link {
+    text-decoration: none;
+    font-size: 1rem;
+    color: #007bff;
+    font-weight: bold;
+  }
+  
+  .tile-link:hover {
+    text-decoration: underline;
+  }
+  

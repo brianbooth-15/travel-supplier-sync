@@ -4,6 +4,7 @@ import com.example.travelapp.model.Supplier;
 import com.example.travelapp.repository.SupplierRepository;
 import graphql.schema.DataFetcher;
 import org.springframework.stereotype.Component;
+import java.util.List;
 
 @Component
 public class SupplierQuery {

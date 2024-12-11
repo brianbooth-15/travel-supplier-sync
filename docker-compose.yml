@@ -5,7 +5,7 @@ services:
     ports:
       - "8080:8080"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/travelapp
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/travelapp   # 'db' is the service name for the PostgreSQL container
       SPRING_DATASOURCE_USERNAME: user
       SPRING_DATASOURCE_PASSWORD: password
       SPRING_JPA_HIBERNATE_DDL_AUTO: update

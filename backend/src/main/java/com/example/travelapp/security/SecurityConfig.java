@@ -4,17 +4,17 @@ import com.example.travelapp.service.CustomUserDetailsService; // Custom user de
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfig {
 
     private final CustomUserDetailsService customUserDetailsService;
 
@@ -22,40 +22,37 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         this.customUserDetailsService = customUserDetailsService;
     }
 
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        // Set custom UserDetailsService and password encoder for authentication
-        auth.userDetailsService(customUserDetailsService).passwordEncoder(passwordEncoder());
-    }
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf().disable() // Disable CSRF for simplicity (can be enabled for production)
-            .authorizeRequests()
-                .antMatchers("/login", "/register").permitAll() // Allow open access to login and register
-                .antMatchers("/admin/**").hasRole("ADMIN") // Restrict access to admin endpoints
-                .antMatchers("/user/**").hasAnyRole("USER", "ADMIN") // Allow USER and ADMIN to access /user
-                .anyRequest().authenticated() // Any other request needs authentication
-            .and()
-                .formLogin()
-                    .loginPage("/login") // Custom login page URL
-                    .permitAll()
-            .and()
-                .logout()
-                    .permitAll(); // Allow all users to logout
+            .csrf(csrf -> csrf.disable()) // Disable CSRF for simplicity; enable in production with proper setup
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/login", "/register").permitAll() // Allow open access to login and register
+                .requestMatchers("/admin/**").hasRole("ADMIN") // Restrict access to admin endpoints
+                .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN") // Allow USER and ADMIN to access /user
+                .anyRequest().authenticated() // Any other request requires authentication
+            )
+            .formLogin(form -> form
+                .loginPage("/login") // Custom login page URL
+                .permitAll() // Allow everyone to access the login page
+            )
+            .logout(logout -> logout
+                .logoutUrl("/logout") // Custom logout URL
+                .permitAll() // Allow everyone to access the logout endpoint
+            );
+
+        return http.build();
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        // Using BCrypt for password encoding (consider using Argon2 or PBKDF2 in production)
+        // Using BCrypt for password encoding
         return new BCryptPasswordEncoder();
     }
 
-    @Override
     @Bean
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        // Expose the AuthenticationManager as a bean
-        return super.authenticationManagerBean();
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        // Use AuthenticationConfiguration to expose AuthenticationManager as a bean
+        return authenticationConfiguration.getAuthenticationManager();
     }
 }
